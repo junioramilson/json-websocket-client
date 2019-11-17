@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     qApp->setPalette(darkPalette);
 
     MainWindow w;
-    w.setWindowTitle("Dragonfly WebSocket Client");
+    w.setWindowTitle("JSON WebSocket Client");
     w.show();
 
     return a.exec();

@@ -16,21 +16,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    JSONConfigParser.cpp \
-    MainWindow.cpp \
-    WSClientTabWidget.cpp \
-    WebSocketClient.cpp \
-    main.cpp
+    src/JSONConfigParser.cpp \
+    src/MainWindow.cpp \
+    src/WSClientTabWidget.cpp \
+    src/WebSocketClient.cpp \
+    src/main.cpp
 
 HEADERS += \
-    JSONConfigParser.h \
-    MainWindow.h \
-    WSClientTabWidget.h \
-    WebSocketClient.h
+    src/JSONConfigParser.h \
+    src/MainWindow.h \
+    src/WSClientTabWidget.h \
+    src/WebSocketClient.h
 
 FORMS += \
-    CustomTabWidget.ui \
-    Main.ui
+    src/CustomTabWidget.ui \
+    src/Main.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
