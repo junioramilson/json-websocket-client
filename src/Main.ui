@@ -77,8 +77,35 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonFollowStyle</enum>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="sessionsTabWidget">
       <property name="tabPosition">
@@ -123,6 +150,7 @@
      <string>Clients</string>
     </property>
     <addaction name="clientsActionNew"/>
+    <addaction name="actionCreate_multiple"/>
     <addaction name="actionClose_all"/>
    </widget>
    <widget class="QMenu" name="menuConfigs">
@@ -163,6 +191,11 @@
   <action name="actionEditMessages">
    <property name="text">
     <string>Edit messages</string>
+   </property>
+  </action>
+  <action name="actionCreate_multiple">
+   <property name="text">
+    <string>Create multiple</string>
    </property>
   </action>
  </widget>

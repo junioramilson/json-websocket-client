@@ -24,6 +24,8 @@ private slots:
 
     void on_actionEditMessages_triggered();
 
+    void on_actionCreate_multiple_triggered();
+
 private:
     void loadConfig(WSClientTabWidget* pTabWidget);
 

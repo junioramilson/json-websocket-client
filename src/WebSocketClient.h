@@ -13,6 +13,7 @@ public:
 
     void closeConnection();
     void sendMessage(QString message);
+    void open(QString url);
 
 signals:
     void closed();

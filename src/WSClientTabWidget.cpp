@@ -59,11 +59,17 @@ void WSClientTabWidget::on_connectBtn_clicked()
         QString url = ui->urlTextInput->text();
 
         if (!m_pWebSocketClient)
+        {
             m_pWebSocketClient = new WebSocketClient(url);
 
-        connect(m_pWebSocketClient, &WebSocketClient::newMessageReceived, this, &WSClientTabWidget::on_new_message_received);
-        connect(m_pWebSocketClient, &WebSocketClient::connected, this, &WSClientTabWidget::on_connected);
-        connect(m_pWebSocketClient, &WebSocketClient::disconnected, this, &WSClientTabWidget::on_disconnected);
+            connect(m_pWebSocketClient, &WebSocketClient::newMessageReceived, this, &WSClientTabWidget::on_new_message_received);
+            connect(m_pWebSocketClient, &WebSocketClient::connected, this, &WSClientTabWidget::on_connected);
+            connect(m_pWebSocketClient, &WebSocketClient::disconnected, this, &WSClientTabWidget::on_disconnected);
+        }
+        else
+        {
+            m_pWebSocketClient->open(url);
+        }
 
         m_btnConnectDisconnectState = EButtonConnectDisconnectState::DISCONNECT;
         ui->connectBtn->setText("Disconnect");

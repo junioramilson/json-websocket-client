@@ -23,6 +23,11 @@ void WebSocketClient::sendMessage(QString message)
     m_webSocket.sendTextMessage(message);
 }
 
+void WebSocketClient::open(QString url)
+{
+    m_webSocket.open(QUrl(url));
+}
+
 void WebSocketClient::onConnected()
 {
     emit connected();

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <QInputDialog>
 #include <QPlainTextEdit>
+#include "MultipleClientsWidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,9 +35,13 @@ void MainWindow::on_sessionsTabWidget_tabCloseRequested(int index)
 {
     QWidget* pWidget = ui->sessionsTabWidget->widget(index);
 
-    if (WSClientTabWidget* pProgramTab = reinterpret_cast<WSClientTabWidget*>(pWidget))
+    if (WSClientTabWidget* pProgramTab = dynamic_cast<WSClientTabWidget*>(pWidget))
     {
         pProgramTab->closeConnection();
+        pProgramTab->close();
+    }
+    else if (MultipleClientsWidget* pProgramTab = dynamic_cast<MultipleClientsWidget*>(pWidget))
+    {
         pProgramTab->close();
     }
 
@@ -53,7 +58,9 @@ void MainWindow::on_clientsActionNew_triggered()
                                             "Ws Client", &ok);
     if (ok && !text.isEmpty()) {
        WSClientTabWidget* programTab = new WSClientTabWidget();
-       ui->sessionsTabWidget->addTab(programTab, text);
+       const int index = ui->sessionsTabWidget->addTab(programTab, text);
+       ui->sessionsTabWidget->setCurrentIndex(index);
+
        loadConfig(programTab);
     }
 }
@@ -65,9 +72,14 @@ void MainWindow::on_actionClose_all_triggered()
     {
         QWidget* pWidget = ui->sessionsTabWidget->widget(index);
 
-        if (WSClientTabWidget* pProgramTab = reinterpret_cast<WSClientTabWidget*>(pWidget))
+        if (WSClientTabWidget* pProgramTab = dynamic_cast<WSClientTabWidget*>(pWidget))
         {
             pProgramTab->closeConnection();
+            pProgramTab->close();
+        }
+
+        if (MultipleClientsWidget* pProgramTab = dynamic_cast<MultipleClientsWidget*>(pWidget))
+        {
             pProgramTab->close();
         }
 
@@ -109,7 +121,7 @@ void MainWindow::on_actionEditMessages_triggered()
         }
     }
 
-    if (WSClientTabWidget* tabWidget = reinterpret_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
+    if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
     {
         loadConfig(tabWidget);
     }
@@ -141,4 +153,11 @@ void MainWindow::loadConfig(WSClientTabWidget* pTabWidget)
         pTabWidget->loadMessages(messagesMap);
         pTabWidget->loadLastUrl(m_jsonParser->GetLastUrl());
     }
+}
+
+void MainWindow::on_actionCreate_multiple_triggered()
+{
+     MultipleClientsWidget* multipleClientsWindow = new MultipleClientsWidget(this);
+     const int index = ui->sessionsTabWidget->addTab(multipleClientsWindow, QString("Multiple clients"));
+     ui->sessionsTabWidget->setCurrentIndex(index);
 }
