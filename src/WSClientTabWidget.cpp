@@ -50,6 +50,11 @@ QString WSClientTabWidget::GetUpdatedConfig() const
     return ui->messageTextInput->toPlainText();
 }
 
+void WSClientTabWidget::setIgnoreResponseTexts(QStringList listText)
+{
+    m_ignoredResponseTexts = listText;
+}
+
 void WSClientTabWidget::on_connectBtn_clicked()
 {
     if (m_btnConnectDisconnectState == EButtonConnectDisconnectState::CONNECT)
@@ -94,7 +99,10 @@ void WSClientTabWidget::on_connected()
 
 void WSClientTabWidget::on_disconnected()
 {
+    m_btnConnectDisconnectState = EButtonConnectDisconnectState::CONNECT;
     appendResponseMsg(QString("Disconnected!"));
+
+    ui->connectBtn->setText("Connect");
     ui->connectBtn->setEnabled(true);
 }
 
@@ -102,6 +110,12 @@ void WSClientTabWidget::on_new_message_received(QString message)
 {
     QJsonDocument jdoc = QJsonDocument::fromJson(message.toUtf8());
     QString identedJson = jdoc.toJson(QJsonDocument::Indented);
+
+    for(QString ignoredText : m_ignoredResponseTexts)
+    {
+        if (identedJson.contains(ignoredText))
+            return;
+    }
 
     appendResponseMsg(identedJson);
 }
@@ -137,4 +151,15 @@ void WSClientTabWidget::appendResponseMsg(QString message)
     m_stringListModel->setStringList(stringList);
 
     ui->responsePlainText->appendPlainText(message);
+}
+
+void WSClientTabWidget::on_clearResponsesBtn_clicked()
+{
+    m_stringListModel->stringList().clear();
+    ui->responsePlainText->clear();
+}
+
+void WSClientTabWidget::on_saveToTxtBtn_clicked()
+{
+
 }

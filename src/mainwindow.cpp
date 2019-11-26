@@ -10,7 +10,6 @@
 #include <iostream>
 #include <QInputDialog>
 #include <QPlainTextEdit>
-#include "MultipleClientsWidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -40,11 +39,6 @@ void MainWindow::on_sessionsTabWidget_tabCloseRequested(int index)
         pProgramTab->closeConnection();
         pProgramTab->close();
     }
-    else if (MultipleClientsWidget* pProgramTab = dynamic_cast<MultipleClientsWidget*>(pWidget))
-    {
-        pProgramTab->close();
-    }
-
     ui->sessionsTabWidget->removeTab(index);
 }
 
@@ -75,11 +69,6 @@ void MainWindow::on_actionClose_all_triggered()
         if (WSClientTabWidget* pProgramTab = dynamic_cast<WSClientTabWidget*>(pWidget))
         {
             pProgramTab->closeConnection();
-            pProgramTab->close();
-        }
-
-        if (MultipleClientsWidget* pProgramTab = dynamic_cast<MultipleClientsWidget*>(pWidget))
-        {
             pProgramTab->close();
         }
 
@@ -155,9 +144,16 @@ void MainWindow::loadConfig(WSClientTabWidget* pTabWidget)
     }
 }
 
-void MainWindow::on_actionCreate_multiple_triggered()
+void MainWindow::on_actionResponse_message_settings_triggered()
 {
-     MultipleClientsWidget* multipleClientsWindow = new MultipleClientsWidget(this);
-     const int index = ui->sessionsTabWidget->addTab(multipleClientsWindow, QString("Multiple clients"));
-     ui->sessionsTabWidget->setCurrentIndex(index);
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Ignore messages"),
+                                            tr("Ignore messages that contains:"), QLineEdit::Normal,
+                                            "heartbeat,test", &ok);
+    if (ok && !text.isEmpty()) {
+        if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
+        {
+            tabWidget->setIgnoreResponseTexts(text.split(","));
+        }
+    }
 }

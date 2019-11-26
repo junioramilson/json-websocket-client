@@ -26,6 +26,8 @@ public:
 
     QString GetUpdatedConfig() const;
 
+    void setIgnoreResponseTexts(QStringList listText);
+
 private slots:
     void on_connectBtn_clicked();
     void on_connected();
@@ -35,6 +37,10 @@ private slots:
     void on_sendMessageBtn_clicked();
     void on_comboBox_currentIndexChanged(const QString &arg1);
     void on_formatMessageBtn_clicked();
+
+    void on_clearResponsesBtn_clicked();
+
+    void on_saveToTxtBtn_clicked();
 
 private:
     void appendResponseMsg(QString message);
@@ -52,6 +58,7 @@ private:
     EButtonConnectDisconnectState m_btnConnectDisconnectState;
 
     QMap<QString, QString> m_messagesMap;
+    QStringList m_ignoredResponseTexts;
 };
 
 #endif // WS_CLIENT_TAB_WIDGET_H

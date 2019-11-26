@@ -23,8 +23,7 @@ private slots:
     void on_actionClose_all_triggered();
 
     void on_actionEditMessages_triggered();
-
-    void on_actionCreate_multiple_triggered();
+    void on_actionResponse_message_settings_triggered();
 
 private:
     void loadConfig(WSClientTabWidget* pTabWidget);

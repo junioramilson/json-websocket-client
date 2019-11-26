@@ -150,7 +150,6 @@
      <string>Clients</string>
     </property>
     <addaction name="clientsActionNew"/>
-    <addaction name="actionCreate_multiple"/>
     <addaction name="actionClose_all"/>
    </widget>
    <widget class="QMenu" name="menuConfigs">
@@ -158,6 +157,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionEditMessages"/>
+    <addaction name="actionResponse_message_settings"/>
    </widget>
    <addaction name="menuClients"/>
    <addaction name="menuConfigs"/>
@@ -196,6 +196,11 @@
   <action name="actionCreate_multiple">
    <property name="text">
     <string>Create multiple</string>
+   </property>
+  </action>
+  <action name="actionResponse_message_settings">
+   <property name="text">
+    <string>Response message settings</string>
    </property>
   </action>
  </widget>
