@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListWidgetItem>
 #include "JSONConfigParser.h"
 #include "WSClientTabWidget.h"
 
@@ -25,11 +26,20 @@ private slots:
     void on_actionEditMessages_triggered();
     void on_actionResponse_message_settings_triggered();
 
+    void on_newMessageBtn_clicked();
+    void on_messagesListWidget_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_saveMessagesBtn_clicked();
+
 private:
     void loadConfig(WSClientTabWidget* pTabWidget);
+    void notifyAllTabs();
+
 
     Ui::MainWindow *ui;
     int m_tabs = 0;
+
+    QMap <QString, QString> m_messageListMap;
 
     JsonConfigParser* m_jsonParser = nullptr;
 };

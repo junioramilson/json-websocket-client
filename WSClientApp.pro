@@ -24,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     src/JSONConfigParser.h \
+    src/JSSintaxHighlighter.h \
     src/MainWindow.h \
     src/WSClientTabWidget.h \
     src/WebSocketClient.h

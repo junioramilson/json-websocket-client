@@ -2,6 +2,7 @@
 #include "ui_CustomTabWidget.h"
 #include <iostream>
 #include <QJsonDocument>
+#include "JSSintaxHighlighter.h"
 
 WSClientTabWidget::WSClientTabWidget(QWidget *parent) :
     QWidget(parent),
@@ -34,14 +35,6 @@ void WSClientTabWidget::loadLastUrl(QString lastUrl)
 void WSClientTabWidget::loadMessages(const QMap<QString, QString> &messagesMap)
 {
     m_messagesMap = messagesMap;
-
-    ui->comboBox->clear();
-
-    for (auto it = messagesMap.begin(); it != messagesMap.end(); it++)
-    {
-        ui->comboBox->addItem(it.key());
-    }
-
     on_formatMessageBtn_clicked();
 }
 
@@ -55,26 +48,31 @@ void WSClientTabWidget::setIgnoreResponseTexts(QStringList listText)
     m_ignoredResponseTexts = listText;
 }
 
+void WSClientTabWidget::setRequestMessageValue(QString value)
+{
+    ui->messageTextInput->setPlainText(value);
+}
+
+QString WSClientTabWidget::GetCurrentRequestMessageText() const
+{
+    return ui->messageTextInput->toPlainText();
+}
+
 void WSClientTabWidget::on_connectBtn_clicked()
 {
     if (m_btnConnectDisconnectState == EButtonConnectDisconnectState::CONNECT)
     {
+        if (ui->urlTextInput->text().isEmpty()) return;
+
         appendResponseMsg(QString("Connecting to %1 ...").arg(ui->urlTextInput->text()));
 
         QString url = ui->urlTextInput->text();
 
-        if (!m_pWebSocketClient)
-        {
-            m_pWebSocketClient = new WebSocketClient(url);
+        m_pWebSocketClient = new WebSocketClient(url);
 
-            connect(m_pWebSocketClient, &WebSocketClient::newMessageReceived, this, &WSClientTabWidget::on_new_message_received);
-            connect(m_pWebSocketClient, &WebSocketClient::connected, this, &WSClientTabWidget::on_connected);
-            connect(m_pWebSocketClient, &WebSocketClient::disconnected, this, &WSClientTabWidget::on_disconnected);
-        }
-        else
-        {
-            m_pWebSocketClient->open(url);
-        }
+        connect(m_pWebSocketClient, &WebSocketClient::newMessageReceived, this, &WSClientTabWidget::on_new_message_received);
+        connect(m_pWebSocketClient, &WebSocketClient::connected, this, &WSClientTabWidget::on_connected);
+        connect(m_pWebSocketClient, &WebSocketClient::disconnected, this, &WSClientTabWidget::on_disconnected);
 
         m_btnConnectDisconnectState = EButtonConnectDisconnectState::DISCONNECT;
         ui->connectBtn->setText("Disconnect");
@@ -82,9 +80,9 @@ void WSClientTabWidget::on_connectBtn_clicked()
     }
     else
     {
-        m_pWebSocketClient->closeConnection();
+        if (m_pWebSocketClient)
+            m_pWebSocketClient->closeConnection();
 
-        m_btnConnectDisconnectState = EButtonConnectDisconnectState::CONNECT;
         ui->connectBtn->setText("Connect");
         ui->connectBtn->setEnabled(true);
     }
@@ -92,15 +90,17 @@ void WSClientTabWidget::on_connectBtn_clicked()
 
 void WSClientTabWidget::on_connected()
 {
-    QString msg = "Connected!";
+    QString msg = "<font color=\"#b2ff59\">Connected!</font><br>";
     ui->connectBtn->setEnabled(true);
     appendResponseMsg(msg);
 }
 
 void WSClientTabWidget::on_disconnected()
 {
+    if (m_btnConnectDisconnectState == EButtonConnectDisconnectState::CONNECT) return;
+
     m_btnConnectDisconnectState = EButtonConnectDisconnectState::CONNECT;
-    appendResponseMsg(QString("Disconnected!"));
+    appendResponseMsg("<font color=\"#ef5350\">Disconnected!</font><br>");
 
     ui->connectBtn->setText("Connect");
     ui->connectBtn->setEnabled(true);
@@ -109,7 +109,7 @@ void WSClientTabWidget::on_disconnected()
 void WSClientTabWidget::on_new_message_received(QString message)
 {
     QJsonDocument jdoc = QJsonDocument::fromJson(message.toUtf8());
-    QString identedJson = jdoc.toJson(QJsonDocument::Indented);
+    QString identedJson = jdoc.toJson(QJsonDocument::Compact);
 
     for(QString ignoredText : m_ignoredResponseTexts)
     {
@@ -150,7 +150,7 @@ void WSClientTabWidget::appendResponseMsg(QString message)
 
     m_stringListModel->setStringList(stringList);
 
-    ui->responsePlainText->appendPlainText(message);
+    ui->responsePlainText->appendHtml(message);
 }
 
 void WSClientTabWidget::on_clearResponsesBtn_clicked()

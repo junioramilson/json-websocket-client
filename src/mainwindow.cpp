@@ -144,16 +144,105 @@ void MainWindow::loadConfig(WSClientTabWidget* pTabWidget)
     }
 }
 
+void MainWindow::notifyAllTabs()
+{
+    for (int i = 0; i < ui->sessionsTabWidget->count(); i++)
+    {
+        WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->widget(i));
+    }
+}
+
 void MainWindow::on_actionResponse_message_settings_triggered()
 {
     bool ok;
     QString text = QInputDialog::getText(this, tr("Ignore messages"),
                                             tr("Ignore messages that contains:"), QLineEdit::Normal,
                                             "heartbeat,test", &ok);
-    if (ok && !text.isEmpty()) {
+    if (ok && !text.isEmpty())
+    {
         if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
         {
             tabWidget->setIgnoreResponseTexts(text.split(","));
         }
+    }
+}
+
+void MainWindow::on_newMessageBtn_clicked()
+{
+    QInputDialog editMessageDialog(this);
+    editMessageDialog.setInputMode(QInputDialog::InputMode::TextInput);
+    editMessageDialog.setOption(QInputDialog::InputDialogOption::UsePlainTextEditForTextInput);
+    editMessageDialog.setLabelText("New JSON Message below");
+    editMessageDialog.resize(800, 600);
+
+    editMessageDialog.exec();
+
+    QString newMessage = editMessageDialog.textValue();
+
+    QJsonDocument jdoc = QJsonDocument::fromJson(newMessage.toUtf8());
+
+    if (jdoc.isObject())
+    {
+        QString compactedJson = jdoc.toJson(QJsonDocument::Compact);
+
+        bool readyToAddMessage = false;
+        while (!readyToAddMessage)
+        {
+            bool okMessageName;
+            QString messageNameText = QInputDialog::getText(this, tr("Message name"),
+                                      tr("Write the message name that will appear in the left panel"), QLineEdit::Normal,
+                                      "", &okMessageName);
+
+            QList<QListWidgetItem*> listItems = ui->messagesListWidget->findItems(messageNameText, Qt::MatchExactly);
+            if (listItems.length() > 0)
+            {
+                QMessageBox::warning(this, "Invalid name", "Cannot add duplicated message names.", QMessageBox::Ok | QMessageBox::Cancel);
+                continue;
+            }
+
+            if (okMessageName)
+            {
+                QListWidgetItem* item = new QListWidgetItem(ui->messagesListWidget);
+                item->setText(messageNameText);
+
+                m_messageListMap.insert(messageNameText, compactedJson);
+
+                ui->messagesListWidget->addItem(item);
+                readyToAddMessage = true;
+            }
+            else
+            {
+                QMessageBox::warning(this, "Invalid name", "Message name cannot be empty", QMessageBox::Ok | QMessageBox::Cancel);
+                continue;
+            }
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "Invalid json", "Invalid JSON. Please check your JSON document.");
+    }
+}
+
+void MainWindow::on_messagesListWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    auto pair = m_messageListMap.find(item->text().toUtf8());
+
+    QJsonDocument jdoc = QJsonDocument::fromJson(pair.value().toUtf8());
+    if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
+    {
+        tabWidget->setRequestMessageValue(jdoc.toJson(QJsonDocument::Indented));
+    }
+}
+
+void MainWindow::on_saveMessagesBtn_clicked()
+{
+    if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
+    {
+        for (QString test : m_messageListMap)
+        {
+            std::cout << test.toStdString() << "\n";
+        }
+
+        //tabWidget->GetCurrentRequestMessageText();
     }
 }
