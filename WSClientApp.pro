@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     src/JSONConfigParser.cpp \
+    src/JSONFileSerializer.cpp \
     src/MainWindow.cpp \
     src/WSClientTabWidget.cpp \
     src/WebSocketClient.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     src/JSONConfigParser.h \
+    src/JSONFileSerializer.h \
     src/JSSintaxHighlighter.h \
     src/MainWindow.h \
     src/WSClientTabWidget.h \

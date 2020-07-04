@@ -5,6 +5,7 @@
 #include <QListWidgetItem>
 #include "JSONConfigParser.h"
 #include "WSClientTabWidget.h"
+#include "JSONFileSerializer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,17 +23,17 @@ private slots:
     void on_sessionsTabWidget_tabCloseRequested(int index);
     void on_clientsActionNew_triggered();
     void on_actionClose_all_triggered();
-
     void on_actionEditMessages_triggered();
     void on_actionResponse_message_settings_triggered();
-
     void on_newMessageBtn_clicked();
     void on_messagesListWidget_itemDoubleClicked(QListWidgetItem *item);
-
     void on_saveMessagesBtn_clicked();
+    void on_messagesListWidget_itemClicked(QListWidgetItem *item);
+    void on_pushButton_clicked();
 
 private:
     void loadConfig(WSClientTabWidget* pTabWidget);
+    void LoadMessages();
     void notifyAllTabs();
 
 
@@ -40,7 +41,9 @@ private:
     int m_tabs = 0;
 
     QMap <QString, QString> m_messageListMap;
+    QString m_selectedKeyListMessage;
 
-    JsonConfigParser* m_jsonParser = nullptr;
+    JsonConfigParser* m_jsonParser = nullptr; //Deprecate
+    JSONFileSerializer* m_jsonFileSerializer = nullptr;
 };
 #endif // MAINWINDOW_H

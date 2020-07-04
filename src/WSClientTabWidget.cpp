@@ -13,6 +13,10 @@ WSClientTabWidget::WSClientTabWidget(QWidget *parent) :
     m_stringListModel = new QStringListModel(QStringList());
 
     m_btnConnectDisconnectState = EButtonConnectDisconnectState::CONNECT;
+
+    ui->messageTextInput->setTabStopDistance(28);
+
+    m_highlighter = new Highlighter(ui->messageTextInput->document());
 }
 
 WSClientTabWidget::~WSClientTabWidget()
@@ -126,6 +130,7 @@ void WSClientTabWidget::on_sendMessageBtn_clicked()
     if (m_pWebSocketClient)
     {
         m_pWebSocketClient->sendMessage(messageStr);
+        appendResponseMsg("Message sent.");
     }
 }
 
@@ -161,5 +166,4 @@ void WSClientTabWidget::on_clearResponsesBtn_clicked()
 
 void WSClientTabWidget::on_saveToTxtBtn_clicked()
 {
-
 }

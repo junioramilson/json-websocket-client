@@ -10,12 +10,6 @@ int main(int argc, char *argv[])
     // set style
     qApp->setStyle(QStyleFactory::create("Fusion"));
 
-    // increase font size for better reading
-    QFont defaultFont = QApplication::font();
-    defaultFont.setPointSize(defaultFont.pointSize()+2);
-
-    qApp->setFont(defaultFont);
-
     // modify palette to dark
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window,QColor(43,43,43));

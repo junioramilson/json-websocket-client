@@ -1,72 +1,69 @@
-#ifndef JSHIGHLIGHTER_H
-#define JSHIGHLIGHTER_H
+#ifndef HIGHLIGHTER_H
+#define HIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
-#include <QTextDocument>
-#include <QTextFormat>
-#include <QStringList>
-#include <QRegExp>
-#include <QVector>
 #include <QTextCharFormat>
+#include <QRegularExpression>
 
-// incomplete example from
-// http://www.qtcentre.org/threads/25501-QtScript-script-text-editor-for-Qt-4-4-3-with-Syntax-Highlighter
+QT_BEGIN_NAMESPACE
+class QTextDocument;
+QT_END_NAMESPACE
 
-class JSHighlighter : public QSyntaxHighlighter
+//! [0]
+class Highlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
+
 public:
+    Highlighter(QTextDocument *parent = 0)
+        : QSyntaxHighlighter(parent)
+    {
+        HighlightingRule rule;
+
+            keywordFormat.setForeground(Qt::darkBlue);
+            keywordFormat.setFontWeight(QFont::Bold);
+        //! [1]
+
+        //! [4]
+            jsonKeysFormat.setForeground(QBrush(QColor("#FF7043")));
+            rule.pattern = QRegularExpression(QStringLiteral("(?m)^[ ]*([^\r\n:]+?)\\s*\""));
+            rule.format = jsonKeysFormat;
+            highlightingRules.append(rule);
+        //! [4]
+
+        //! [5]
+            jsonValuesFormat.setForeground(QBrush(QColor("#FFCA28")));
+            rule.pattern = QRegularExpression(QStringLiteral("[:^]\\s(\".*\")"));
+            rule.format = jsonValuesFormat;
+            highlightingRules.append(rule);
+        //! [5]
+    }
+
+protected:
+    void highlightBlock(const QString &text) override
+    {
+        for (const HighlightingRule &rule : qAsConst(highlightingRules)) {
+            QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+            while (matchIterator.hasNext()) {
+                QRegularExpressionMatch match = matchIterator.next();
+                setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+            }
+        }
+        //! [7] //! [8]
+        setCurrentBlockState(0);
+    }
+
+private:
     struct HighlightingRule
     {
-        QRegExp pattern;
+        QRegularExpression pattern;
         QTextCharFormat format;
     };
     QVector<HighlightingRule> highlightingRules;
-
-    void SetRule(QString kind, QString pattern, QTextCharFormat format)
-    {
-        HighlightingRule rule;
-        rule.pattern = QRegExp(pattern);
-        rule.format = format;
-        highlightingRules.append(rule);
-    }
-
-    JSHighlighter(QTextDocument *parent = 0): QSyntaxHighlighter(parent)
-    {
-        QTextCharFormat keywordFormat;
-        keywordFormat.setForeground(Qt::black);
-        keywordFormat.setFontWeight(QFont::Bold);
-        QStringList keywordPatterns;
-        keywordPatterns << "\\bvar\\b" << "\\bArray\\b" << "\\bfunction\\b"
-                        << "\\breturn\\b" << "\\barguments\\b" << "\\bif\\b"
-                        << "\\belse\\b" << "\\bfor\\b" << "\\bswitch\\b"
-                        << "\\bcase\\b" << "\\bbreak\\b" << "\\bwhile\\b";
-        int i = 0;
-        foreach (const QString &pattern, keywordPatterns) {
-            SetRule(QString("00_KeyWord_%1").arg(i),pattern,keywordFormat);
-            ++i;
-        }
-        // Values
-        QTextCharFormat valueFormat, classFormat;
-        valueFormat.setForeground(Qt::blue);
-        SetRule("03_Values","\\btrue\\b|\\bfalse\\b|\\b[0-9]+\\b",valueFormat);
-        QTextCharFormat functionFormat;
-        //functionFormat.setFontItalic(false);
-        functionFormat.setForeground(Qt::darkBlue);
-        SetRule("04_Functions","\\b[A-Za-z0-9_]+(?=\\()",functionFormat);
-        // Qt Classes
-        classFormat.setFontWeight(QFont::Bold);
-        classFormat.setForeground(Qt::darkMagenta);
-        SetRule("06_QtClasses","\\bQ[A-Z]+[A-Za-z]+\\b",classFormat);
-        // Quotation
-        QTextCharFormat quotationFormat;
-        quotationFormat.setForeground(Qt::blue);
-        SetRule("z1_Quotations","\"[^\"]*\"",quotationFormat);
-        // Single Line Comments
-        QTextCharFormat singleLineCommentFormat;
-        singleLineCommentFormat.setForeground(Qt::darkGreen);
-        SetRule("z2_SingleLineComments","//[^\n]*",singleLineCommentFormat);
-    }
+    QTextCharFormat keywordFormat;
+    QTextCharFormat jsonKeysFormat;
+    QTextCharFormat jsonValuesFormat;
 };
+//! [0]
 
-#endif // JSHIGHLIGHTER_H
+#endif // HIGHLIGHTER_H

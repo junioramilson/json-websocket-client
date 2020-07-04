@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include "JSSintaxHighlighter.h"
 
 namespace Ui {
 class WSClientTabWidget;
@@ -54,6 +55,7 @@ private:
     Ui::WSClientTabWidget *ui;
     QStringListModel* m_stringListModel = nullptr;
     WebSocketClient* m_pWebSocketClient = nullptr;
+    Highlighter* m_highlighter = nullptr;
 
     EButtonConnectDisconnectState m_btnConnectDisconnectState;
 

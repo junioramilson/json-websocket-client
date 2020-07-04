@@ -17,7 +17,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    WSClientTabWidget* programTab = new WSClientTabWidget();
+    LoadMessages();
+
+    WSClientTabWidget* programTab = new WSClientTabWidget(this);
     ui->sessionsTabWidget->addTab(programTab, tr("WS Client 1"));
     m_tabs++;
 
@@ -29,6 +31,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::LoadMessages()
+{
+
+    m_jsonFileSerializer = new JSONFileSerializer(this);
+    m_jsonFileSerializer->Load();
+
+    m_messageListMap = m_jsonFileSerializer->ReadSavedMessages();
+
+    auto it = m_messageListMap.begin();
+    while (it != m_messageListMap.end())
+    {
+        ui->messagesListWidget->addItem(it.key());
+        ++it;
+    }
+}
 
 void MainWindow::on_sessionsTabWidget_tabCloseRequested(int index)
 {
@@ -244,5 +261,43 @@ void MainWindow::on_saveMessagesBtn_clicked()
         }
 
         //tabWidget->GetCurrentRequestMessageText();
+    }
+}
+
+void MainWindow::on_messagesListWidget_itemClicked(QListWidgetItem *item)
+{
+    QString key = item->text().toUtf8();
+    if (m_messageListMap.contains(key))
+    {
+        m_selectedKeyListMessage = key;
+    }
+}
+
+//OnEdit Click
+void MainWindow::on_pushButton_clicked()
+{
+    if (!m_selectedKeyListMessage.isEmpty() && m_messageListMap.contains(m_selectedKeyListMessage))
+    {
+        QInputDialog editMessageDialog(this);
+        editMessageDialog.setInputMode(QInputDialog::InputMode::TextInput);
+        editMessageDialog.setOption(QInputDialog::InputDialogOption::UsePlainTextEditForTextInput);
+        editMessageDialog.setLabelText(QString("Edit message %1").arg(m_selectedKeyListMessage));
+
+        QJsonDocument formatedMessage = QJsonDocument::fromJson(m_messageListMap[m_selectedKeyListMessage].toUtf8());
+        editMessageDialog.setTextValue(formatedMessage.toJson(QJsonDocument::Indented));
+        editMessageDialog.resize(800, 600);
+
+        editMessageDialog.exec();
+
+        QString editedMessage = editMessageDialog.textValue();
+
+        QJsonDocument jdoc = QJsonDocument::fromJson(editedMessage.toUtf8());
+
+        m_messageListMap[m_selectedKeyListMessage] = jdoc.toJson(QJsonDocument::Compact);
+
+        if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
+        {
+            tabWidget->setRequestMessageValue(jdoc.toJson(QJsonDocument::Indented));
+        }
     }
 }
