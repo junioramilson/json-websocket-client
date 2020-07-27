@@ -10,30 +10,25 @@ CONFIG += c++11 console
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-# You can also make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 SOURCES += \
-    src/JSONConfigParser.cpp \
-    src/JSONFileSerializer.cpp \
-    src/MainWindow.cpp \
-    src/WSClientTabWidget.cpp \
-    src/WebSocketClient.cpp \
+    src/JSON/JSONConfigParser.cpp \
+    src/JSON/JSONFileSerializer.cpp \
+    src/Widgets/WSMainWindow.cpp \
+    src/Widgets/WSClientTabWidget.cpp \
+    src/WebSocket/WebSocketClient.cpp \
     src/main.cpp
 
 HEADERS += \
-    src/JSONConfigParser.h \
-    src/JSONFileSerializer.h \
-    src/JSSintaxHighlighter.h \
-    src/MainWindow.h \
-    src/WSClientTabWidget.h \
-    src/WebSocketClient.h
+    src/JSON/JSONConfigParser.h \
+    src/JSON/JSONFileSerializer.h \
+    src/Widgets/JSSintaxHighlighter.h \
+    src/Widgets/WSMainWindow.h \
+    src/Widgets/WSClientTabWidget.h \
+    src/WebSocket/WebSocketClient.h
 
 FORMS += \
-    src/CustomTabWidget.ui \
-    src/Main.ui
+    src/UI/WSClientTabWidget.ui \
+    src/UI/Main.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

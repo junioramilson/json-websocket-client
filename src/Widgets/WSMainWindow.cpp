@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "WSMainWindow.h"
 #include "WSClientTabWidget.h"
 #include "ui_Main.h"
 #include <QFileDialog>
@@ -259,6 +259,8 @@ void MainWindow::on_saveMessagesBtn_clicked()
         {
             std::cout << test.toStdString() << "\n";
         }
+
+        m_jsonFileSerializer->SaveMessages(m_messageListMap);
 
         //tabWidget->GetCurrentRequestMessageText();
     }

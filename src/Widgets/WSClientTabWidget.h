@@ -2,7 +2,7 @@
 #define WS_CLIENT_TAB_WIDGET_H
 
 #include <QWidget>
-#include "WebSocketClient.h"
+#include "../WebSocket/WebSocketClient.h"
 #include <QStringListModel>
 #include <QJsonObject>
 #include <QJsonArray>

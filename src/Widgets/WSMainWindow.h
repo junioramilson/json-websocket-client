@@ -3,9 +3,9 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
-#include "JSONConfigParser.h"
+#include "../JSON/JSONConfigParser.h"
 #include "WSClientTabWidget.h"
-#include "JSONFileSerializer.h"
+#include "../JSON/JSONFileSerializer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

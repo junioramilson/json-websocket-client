@@ -21,7 +21,7 @@ void JSONFileSerializer::Load()
         QJsonParseError jsonParseError;
         m_jsonDocument = QJsonDocument::fromJson(file.readAll(), &jsonParseError);
 
-        if ((jsonParseError.error != QJsonParseError::NoError) || m_jsonDocument.isEmpty())
+        if (m_jsonDocument.isEmpty())
         {
             SetupInitialConfigFileContents();
         }

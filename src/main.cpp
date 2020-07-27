@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "Widgets/WSMainWindow.h"
 
 #include <QApplication>
 #include <QStyleFactory>
