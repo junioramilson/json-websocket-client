@@ -1,15 +1,24 @@
 #include "WebSocketClient.h"
 
-WebSocketClient::WebSocketClient(const QUrl& url, bool debug, QObject *parent)
+WebSocketClient::WebSocketClient(const QUrl& url, QMap<QString, QString> rawHeaders, QObject *parent)
     : QObject(parent)
     , m_url(url)
-    , m_debug(debug)
 {
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketClient::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketClient::closeConnection);
 
-    m_webSocket.open(QUrl(url));
+    QNetworkRequest netRequest;
+
+    netRequest.setUrl(QUrl(url));
+
+    for (auto key : rawHeaders.keys())
+    {
+        const QString value = rawHeaders.value(key);
+        netRequest.setRawHeader(key.toUtf8(), value.toUtf8());
+    }
+
+    m_webSocket.open(netRequest);
 }
 
 void WebSocketClient::closeConnection()

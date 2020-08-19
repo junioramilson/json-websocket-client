@@ -1,8 +1,10 @@
 #include "WSClientTabWidget.h"
-#include "ui_CustomTabWidget.h"
+#include "ui_WSClientTabWidget.h"
 #include <iostream>
 #include <QJsonDocument>
+#include <QInputDialog>
 #include "JSSintaxHighlighter.h"
+#include "../JSON/JSONFileSerializer.h"
 
 WSClientTabWidget::WSClientTabWidget(QWidget *parent) :
     QWidget(parent),
@@ -71,8 +73,9 @@ void WSClientTabWidget::on_connectBtn_clicked()
         appendResponseMsg(QString("Connecting to %1 ...").arg(ui->urlTextInput->text()));
 
         QString url = ui->urlTextInput->text();
+        auto rawHeaders = GetConnectionHeaders();
 
-        m_pWebSocketClient = new WebSocketClient(url);
+        m_pWebSocketClient = new WebSocketClient(url, rawHeaders);
 
         connect(m_pWebSocketClient, &WebSocketClient::newMessageReceived, this, &WSClientTabWidget::on_new_message_received);
         connect(m_pWebSocketClient, &WebSocketClient::connected, this, &WSClientTabWidget::on_connected);
@@ -81,6 +84,8 @@ void WSClientTabWidget::on_connectBtn_clicked()
         m_btnConnectDisconnectState = EButtonConnectDisconnectState::DISCONNECT;
         ui->connectBtn->setText("Disconnect");
         ui->connectBtn->setEnabled(false);
+
+        JSONFileSerializer::Instance().SaveHeaders(rawHeaders);
     }
     else
     {
@@ -90,6 +95,8 @@ void WSClientTabWidget::on_connectBtn_clicked()
         ui->connectBtn->setText("Connect");
         ui->connectBtn->setEnabled(true);
     }
+
+    JSONFileSerializer::Instance().SaveLastUrl(ui->urlTextInput->text());
 }
 
 void WSClientTabWidget::on_connected()
@@ -112,16 +119,16 @@ void WSClientTabWidget::on_disconnected()
 
 void WSClientTabWidget::on_new_message_received(QString message)
 {
-    QJsonDocument jdoc = QJsonDocument::fromJson(message.toUtf8());
-    QString identedJson = jdoc.toJson(QJsonDocument::Compact);
+//    QJsonDocument jdoc = QJsonDocument::fromJson(message.toUtf8());
+//    QString identedJson = jdoc.toJson(QJsonDocument::Compact);
 
-    for(QString ignoredText : m_ignoredResponseTexts)
-    {
-        if (identedJson.contains(ignoredText))
-            return;
-    }
+//    for(QString ignoredText : m_ignoredResponseTexts)
+//    {
+//        if (identedJson.contains(ignoredText))
+//            return;
+//    }
 
-    appendResponseMsg(identedJson);
+    appendResponseMsg("Received: " + message);
 }
 
 void WSClientTabWidget::on_sendMessageBtn_clicked()
@@ -158,6 +165,20 @@ void WSClientTabWidget::appendResponseMsg(QString message)
     ui->responsePlainText->appendHtml(message);
 }
 
+QMap<QString, QString> WSClientTabWidget::GetConnectionHeaders()
+{
+    QMap<QString, QString> headers;
+    for (int i = 0; i < ui->tableConnHeadersWidget->rowCount(); i++)
+    {
+        auto itemKey = ui->tableConnHeadersWidget->item(i, 0);
+        auto itemValue = ui->tableConnHeadersWidget->item(i, 1);
+
+        headers.insert(itemKey->text(), itemValue->text());
+    }
+
+    return headers;
+}
+
 void WSClientTabWidget::on_clearResponsesBtn_clicked()
 {
     m_stringListModel->stringList().clear();
@@ -165,5 +186,20 @@ void WSClientTabWidget::on_clearResponsesBtn_clicked()
 }
 
 void WSClientTabWidget::on_saveToTxtBtn_clicked()
+{
+}
+
+void WSClientTabWidget::on_addHeaderBtn_clicked()
+{
+    ui->tableConnHeadersWidget->insertRow(ui->tableConnHeadersWidget->rowCount());
+}
+
+void WSClientTabWidget::on_removeHeaderBtn_clicked()
+{
+    const int currentRow = ui->tableConnHeadersWidget->currentRow();
+    ui->tableConnHeadersWidget->removeRow(currentRow);
+}
+
+void WSClientTabWidget::on_tableConnHeadersWidget_cellChanged(int row, int column)
 {
 }

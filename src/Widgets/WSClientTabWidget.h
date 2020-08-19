@@ -42,9 +42,13 @@ private slots:
     void on_formatMessageBtn_clicked();
     void on_clearResponsesBtn_clicked();
     void on_saveToTxtBtn_clicked();
+    void on_addHeaderBtn_clicked();
+    void on_removeHeaderBtn_clicked();
+    void on_tableConnHeadersWidget_cellChanged(int row, int column);
 
 private:
     void appendResponseMsg(QString message);
+    QMap<QString, QString> GetConnectionHeaders();
 
 private:
     enum class EButtonConnectDisconnectState {
@@ -60,6 +64,8 @@ private:
     EButtonConnectDisconnectState m_btnConnectDisconnectState;
 
     QMap<QString, QString> m_messagesMap;
+    QMap<QString, QString> m_connectionHeaders;
+
     QStringList m_ignoredResponseTexts;
 };
 

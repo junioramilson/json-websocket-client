@@ -28,26 +28,67 @@ void JSONFileSerializer::Load()
 
         file.close();
     }
-
 }
 
 void JSONFileSerializer::SetupInitialConfigFileContents()
 {
     QJsonObject rootObject = m_jsonDocument.object();
-
+    rootObject["last_url"] = "ws://localhost:3030";
     rootObject["messages"] = QJsonValue::Array;
 
     m_jsonDocument.setObject(rootObject);
 
+    WriteToConfig(m_jsonDocument);
+}
+
+void JSONFileSerializer::WriteToConfig(const QJsonDocument &document)
+{
     QFile file(m_configFilePath);
     file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
-    file.write(m_jsonDocument.toJson(QJsonDocument::Indented));
+    file.write(document.toJson(QJsonDocument::Indented));
     file.close();
+}
+
+void JSONFileSerializer::SaveLastUrl(const QString& url)
+{
+    QJsonObject rootObject = m_jsonDocument.object();
+    rootObject["last_url"] = url;
+    m_jsonDocument.setObject(rootObject);
+
+    WriteToConfig(m_jsonDocument);
+}
+
+QJsonDocument JSONFileSerializer::GetDocument() const
+{
+    return m_jsonDocument;
+}
+
+void JSONFileSerializer::SaveHeaders(QMap<QString, QString> headersMap)
+{
+    QJsonObject rootObject = m_jsonDocument.object();
+    QJsonArray headersArray;
+
+    QMapIterator<QString, QString> it(headersMap);
+    while (it.hasNext())
+    {
+        it.next();
+
+        QJsonObject headerObject;
+        headerObject[it.key()] = it.value();
+        headersArray.push_back(headerObject);
+    }
+
+    rootObject["headers"] = headersArray;
+    m_jsonDocument.setObject(rootObject);
+
+    WriteToConfig(m_jsonDocument);
 }
 
 void JSONFileSerializer::SaveMessages(QMap<QString, QString> messageListMap, const QString &fileName)
 {
-    QJsonObject rootObject;
+    QJsonDocument document;
+    QJsonArray messagesArr;
+    QJsonObject newRootObject = document.object();
 
     auto it = messageListMap.begin();
     while (it != messageListMap.end())
@@ -55,8 +96,19 @@ void JSONFileSerializer::SaveMessages(QMap<QString, QString> messageListMap, con
         QString messageName = it.key();
         QString messageBody = it.value();
 
+        QJsonObject messageObject;
+        messageObject["name"] = messageName;
+        messageObject["body"] = QJsonDocument::fromJson(messageBody.toUtf8()).object();
+
+        messagesArr.push_back(messageObject);
+
         ++it;
     }
+
+    newRootObject["messages"] = messagesArr;
+    document.setObject(newRootObject);
+
+    WriteToConfig(document);
 }
 
 QMap<QString, QString> JSONFileSerializer::ReadSavedMessages()
@@ -84,4 +136,10 @@ QMap<QString, QString> JSONFileSerializer::ReadSavedMessages()
     }
 
     return messageListMap;
+}
+
+QString JSONFileSerializer::GetLastUrl()
+{
+     QJsonObject rootObject = m_jsonDocument.object();
+     return rootObject["last_url"].toString();
 }

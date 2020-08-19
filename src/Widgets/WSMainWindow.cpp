@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     LoadMessages();
 
     WSClientTabWidget* programTab = new WSClientTabWidget(this);
-    ui->sessionsTabWidget->addTab(programTab, tr("WS Client 1"));
+    ui->sessionsTabWidget->addTab(programTab, tr("WS Client"));
     m_tabs++;
 
     loadConfig(programTab);
@@ -33,11 +33,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::LoadMessages()
 {
+    JSONFileSerializer::Instance().Load();
 
-    m_jsonFileSerializer = new JSONFileSerializer(this);
-    m_jsonFileSerializer->Load();
-
-    m_messageListMap = m_jsonFileSerializer->ReadSavedMessages();
+    m_messageListMap = JSONFileSerializer::Instance().ReadSavedMessages();
 
     auto it = m_messageListMap.begin();
     while (it != m_messageListMap.end())
@@ -97,7 +95,7 @@ void MainWindow::on_actionClose_all_triggered()
 
 void MainWindow::on_actionEditMessages_triggered()
 {
-    QString actualConfigFileContents = m_jsonParser->GetJsonDocument().toJson(QJsonDocument::Indented);
+    QString actualConfigFileContents = JSONFileSerializer::Instance().GetDocument().toJson(QJsonDocument::Indented);
     QInputDialog editMessageDialog(this);
     editMessageDialog.setInputMode(QInputDialog::InputMode::TextInput);
     editMessageDialog.setOption(QInputDialog::InputDialogOption::UsePlainTextEditForTextInput);
@@ -139,26 +137,22 @@ void MainWindow::loadConfig(WSClientTabWidget* pTabWidget)
 
     if (fileName.isEmpty())
         return;
-    else
+
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
     {
-        QFile file(fileName);
-
-        if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
-        {
-            QMessageBox::information(this, tr("Unable to open file"), file.errorString());
-            return;
-        }
-
-        QString fileContentStr = file.readAll();
-
-        file.close();
-
-        m_jsonParser = new JsonConfigParser(fileContentStr);
-
-        auto messagesMap = m_jsonParser->GetMessages();
-        pTabWidget->loadMessages(messagesMap);
-        pTabWidget->loadLastUrl(m_jsonParser->GetLastUrl());
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
     }
+
+    QString fileContentStr = file.readAll();
+
+    file.close();
+
+    auto messagesMap = JSONFileSerializer::Instance().ReadSavedMessages();
+    pTabWidget->loadMessages(messagesMap);
+    pTabWidget->loadLastUrl(JSONFileSerializer::Instance().GetLastUrl());
 }
 
 void MainWindow::notifyAllTabs()
@@ -253,17 +247,7 @@ void MainWindow::on_messagesListWidget_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::on_saveMessagesBtn_clicked()
 {
-    if (WSClientTabWidget* tabWidget = dynamic_cast<WSClientTabWidget*>(ui->sessionsTabWidget->currentWidget()))
-    {
-        for (QString test : m_messageListMap)
-        {
-            std::cout << test.toStdString() << "\n";
-        }
-
-        m_jsonFileSerializer->SaveMessages(m_messageListMap);
-
-        //tabWidget->GetCurrentRequestMessageText();
-    }
+    JSONFileSerializer::Instance().SaveMessages(m_messageListMap);
 }
 
 void MainWindow::on_messagesListWidget_itemClicked(QListWidgetItem *item)

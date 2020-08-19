@@ -42,8 +42,5 @@ private:
 
     QMap <QString, QString> m_messageListMap;
     QString m_selectedKeyListMessage;
-
-    JsonConfigParser* m_jsonParser = nullptr; //Deprecate
-    JSONFileSerializer* m_jsonFileSerializer = nullptr;
 };
 #endif // MAINWINDOW_H
