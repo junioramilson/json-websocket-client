@@ -173,7 +173,8 @@ QMap<QString, QString> WSClientTabWidget::GetConnectionHeaders()
         auto itemKey = ui->tableConnHeadersWidget->item(i, 0);
         auto itemValue = ui->tableConnHeadersWidget->item(i, 1);
 
-        headers.insert(itemKey->text(), itemValue->text());
+        if (itemKey && itemValue)
+            headers.insert(itemKey->text(), itemValue->text());
     }
 
     return headers;
