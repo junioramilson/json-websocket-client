@@ -11,9 +11,7 @@
    </rect>
   </property>
   <property name="font">
-   <font>
-    <family>Segoe UI</family>
-   </font>
+   <font/>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -80,7 +78,7 @@
           <property name="frameShadow">
            <enum>QFrame::Plain</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_8">
+          <layout class="QGridLayout" name="gridLayout_8" columnstretch="0">
            <property name="leftMargin">
             <number>4</number>
            </property>
@@ -93,8 +91,11 @@
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <property name="spacing">
+           <property name="horizontalSpacing">
             <number>2</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>1</number>
            </property>
            <item row="0" column="0">
             <widget class="QFrame" name="frame">
@@ -138,27 +139,28 @@
               <property name="verticalSpacing">
                <number>2</number>
               </property>
-              <item row="3" column="2">
-               <widget class="QPushButton" name="connectBtn">
-                <property name="minimumSize">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
                  <size>
-                  <width>0</width>
-                  <height>25</height>
+                  <width>16777215</width>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <family>Segoe UI</family>
-                  <pointsize>9</pointsize>
-                  <weight>50</weight>
+                  <pointsize>13</pointsize>
                   <bold>false</bold>
                  </font>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
                 <property name="text">
-                 <string>Connect</string>
+                 <string>URL</string>
                 </property>
                </widget>
               </item>
@@ -172,9 +174,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Segoe UI</family>
-                  <pointsize>10</pointsize>
-                  <weight>50</weight>
+                  <pointsize>13</pointsize>
                   <bold>false</bold>
                   <underline>false</underline>
                   <stylestrategy>PreferAntialias</stylestrategy>
@@ -200,30 +200,25 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
+              <item row="3" column="2">
+               <widget class="QPushButton" name="connectBtn">
+                <property name="minimumSize">
                  <size>
-                  <width>16777215</width>
-                  <height>20</height>
+                  <width>0</width>
+                  <height>25</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <family>Segoe UI</family>
-                  <pointsize>8</pointsize>
-                  <weight>50</weight>
+                  <pointsize>13</pointsize>
                   <bold>false</bold>
                  </font>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
                 <property name="text">
-                 <string>URL</string>
+                 <string>Connect</string>
                 </property>
                </widget>
               </item>
@@ -267,54 +262,15 @@
                <number>2</number>
               </property>
               <property name="horizontalSpacing">
-               <number>0</number>
-              </property>
-              <property name="verticalSpacing">
                <number>2</number>
               </property>
-              <item row="2" column="3">
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="2" column="2">
-               <widget class="QPushButton" name="sendMessageBtn">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Segoe UI</family>
-                  <pointsize>9</pointsize>
-                  <weight>50</weight>
-                  <bold>false</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
+              <property name="verticalSpacing">
+               <number>3</number>
+              </property>
+              <item row="3" column="1">
+               <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>Send</string>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
+                 <string>Ping message body</string>
                 </property>
                </widget>
               </item>
@@ -328,9 +284,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>Segoe UI</family>
-                  <pointsize>8</pointsize>
-                  <weight>50</weight>
+                  <pointsize>13</pointsize>
                   <bold>false</bold>
                  </font>
                 </property>
@@ -339,12 +293,22 @@
                 </property>
                </widget>
               </item>
+              <item row="8" column="1">
+               <widget class="QSpinBox" name="pingIntervalSpinBox">
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="value">
+                 <number>1000</number>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="1" colspan="3">
                <widget class="QTextEdit" name="messageTextInput">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>50</height>
+                  <height>100</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -355,9 +319,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>JetBrains Mono</family>
-                  <pointsize>9</pointsize>
-                  <weight>50</weight>
+                  <pointsize>13</pointsize>
                   <bold>false</bold>
                  </font>
                 </property>
@@ -378,8 +340,75 @@
                 </property>
                </widget>
               </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="sendMessageBtn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>13</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Send</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QPlainTextEdit" name="pingMessageBodyTextEdit">
+                <property name="maximumSize">
+                 <size>
+                  <width>10000</width>
+                  <height>100</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Ping interval (ms)</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
+           </item>
+           <item row="2" column="0">
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -515,7 +544,6 @@
               </property>
               <property name="font">
                <font>
-                <family>Segoe UI</family>
                 <stylestrategy>PreferAntialias</stylestrategy>
                </font>
               </property>
@@ -582,9 +610,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Segoe UI</family>
-           <pointsize>8</pointsize>
-           <weight>50</weight>
+           <pointsize>13</pointsize>
            <bold>false</bold>
           </font>
          </property>
@@ -620,9 +646,7 @@
             </property>
             <property name="font">
              <font>
-              <family>Hack</family>
               <pointsize>9</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -650,14 +674,14 @@
             <property name="readOnly">
              <bool>true</bool>
             </property>
-            <property name="tabStopWidth">
-             <number>8</number>
-            </property>
             <property name="textInteractionFlags">
              <set>Qt::TextSelectableByMouse</set>
             </property>
             <property name="backgroundVisible">
              <bool>false</bool>
+            </property>
+            <property name="tabStopWidth" stdset="0">
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -685,9 +709,7 @@
               </property>
               <property name="font">
                <font>
-                <family>Segoe UI</family>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
+                <pointsize>13</pointsize>
                 <bold>false</bold>
                </font>
               </property>
@@ -712,9 +734,7 @@
               </property>
               <property name="font">
                <font>
-                <family>Segoe UI</family>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
+                <pointsize>13</pointsize>
                 <bold>false</bold>
                </font>
               </property>

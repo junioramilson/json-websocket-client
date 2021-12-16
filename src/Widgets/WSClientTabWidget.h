@@ -8,6 +8,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include "JSSintaxHighlighter.h"
+#include <QThread>
 
 namespace Ui {
 class WSClientTabWidget;
@@ -65,6 +66,8 @@ private:
 
     QMap<QString, QString> m_messagesMap;
     QMap<QString, QString> m_connectionHeaders;
+
+    std::thread* m_pingThread;
 
     QStringList m_ignoredResponseTexts;
 };
