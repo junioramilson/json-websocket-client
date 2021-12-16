@@ -5,6 +5,7 @@
 #include <QInputDialog>
 #include "JSSintaxHighlighter.h"
 #include "../JSON/JSONFileSerializer.h"
+#include <QDebug>
 
 WSClientTabWidget::WSClientTabWidget(QWidget *parent) :
     QWidget(parent),
@@ -104,6 +105,18 @@ void WSClientTabWidget::on_connected()
     QString msg = "<font color=\"#b2ff59\">Connected!</font><br>";
     ui->connectBtn->setEnabled(true);
     appendResponseMsg(msg);
+
+    m_pingThread = new std::thread([&]() {
+        while(true) {
+            const QString pingMessage = ui->pingMessageBodyTextEdit->toPlainText();
+            const int pingIntervalValue = ui->pingIntervalSpinBox->value();
+
+            m_pWebSocketClient->sendMessage(pingMessage);
+            std::this_thread::sleep_for(std::chrono::milliseconds(pingIntervalValue));
+        }
+    });
+
+    m_pingThread->detach();
 }
 
 void WSClientTabWidget::on_disconnected()
@@ -115,6 +128,10 @@ void WSClientTabWidget::on_disconnected()
 
     ui->connectBtn->setText("Connect");
     ui->connectBtn->setEnabled(true);
+
+    if (m_pingThread) {
+        delete m_pingThread;
+    }
 }
 
 void WSClientTabWidget::on_new_message_received(QString message)
@@ -173,7 +190,8 @@ QMap<QString, QString> WSClientTabWidget::GetConnectionHeaders()
         auto itemKey = ui->tableConnHeadersWidget->item(i, 0);
         auto itemValue = ui->tableConnHeadersWidget->item(i, 1);
 
-        headers.insert(itemKey->text(), itemValue->text());
+        if (itemKey && itemValue)
+            headers.insert(itemKey->text(), itemValue->text());
     }
 
     return headers;
